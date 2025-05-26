@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column; /* Arrange elements vertically */
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column; /* Arrange child elements vertically */
+  flex: 1; /* Expand container to fill remaining space */
+}
