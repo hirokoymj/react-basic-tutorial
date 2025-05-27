@@ -4,11 +4,10 @@ import useFetch from "./useFetch";
 const url = "https://jsonplaceholder.typicode.com/users";
 
 export const UsersView2 = () => {
-  // const [users, setUsers] = useState([]);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   // const [message, setMessage] = useState("");
-  const [data, loading, error] = useFetch();
 
   ///FORM
   const [name, setName] = useState("");
@@ -17,15 +16,16 @@ export const UsersView2 = () => {
   useEffect(() => {
     fetch(url)
       .then((response) => {
-        if (!response.ok) throw new Error("");
-        return response.json();
+        if (!response.ok) return new Error("");
+        const data = response.json();
+        return data;
       })
       .then((data) => {
         setUsers(data);
         setLoading(false);
       })
-      .catch((e) => {
-        setError(e);
+      .catch((error) => {
+        console.log(error.message);
       });
   }, []);
 

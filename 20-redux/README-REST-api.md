@@ -18,6 +18,34 @@ const data = await response.json()
 - [UsersView.js](./src/features/users/UsersView.jsx)
   ![](./screen-restful-api-demo.png)
 
+```js
+//GET
+fetch(url).then().then().catch()
+response.ok
+response.json -> data
+setUsers(data)
+//POST
+fetch(url).then.then.catch
+options:{
+  method:post,
+  headers: content-type:app/json},
+  body: {name, email}
+}
+response.ok
+response.json -> data -> setUsers({...users, data})
+//DELETE(id)
+fetch(url).then.then.catch
+options:{method: DELETE, headers: content-type: app/json, body:{name:xxx} }
+response.ok
+response.json -> data -> setUsers(users => users.filter(user.id!==data.id)
+//PUT (id)
+fetch(url).then.then.catch
+options: method: PUT, headers: content-type:app/json, body:{name: "xxx}
+response.ok true
+response.json -> data
+setUsers(users => users.map(item => item.id === data.id ? data : item))
+```
+
 ## GET
 
 ```js
