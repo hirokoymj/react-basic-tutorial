@@ -139,3 +139,31 @@ const cachedValue = useMemo(calculateValue, dependencies);
 - useCallback memoizes the function itself, while useMemo memoizes the value returned by a function.
 - useCallback is typically used when passing functions as props to child components to prevent re-renders.
 - useMemo is typically used when you have **expensive calculations** that you want to avoid recomputing unnecessarily.
+
+**Troubleshoot**
+
+- https://react.dev/reference/react/useCallback#troubleshooting
+
+BEFORE
+
+```js
+function ProductPage({ productId, referrer }) {
+  const handleSubmit = useCallback((orderDetails) => {
+    post('/product/' + productId + '/buy', {
+      referrer,
+      orderDetails,
+    });
+  }); // 🔴 Returns a new function every time: no dependency array
+```
+
+AFTER
+
+```js
+function ProductPage({ productId, referrer }) {
+  const handleSubmit = useCallback((orderDetails) => {
+    post('/product/' + productId + '/buy', {
+      referrer,
+      orderDetails,
+    });
+  }, [productId, referrer]); // ✅ Does not return a new function unnecessarily
+```
