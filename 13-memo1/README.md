@@ -129,16 +129,15 @@ const cachedFn = useCallback(fn, dependencies);
 const cachedValue = useMemo(calculateValue, dependencies);
 ```
 
-- Performance optimization
+- Performance optimization.
 - preventing unnecessary re-renders.
-- useCallback memoizes a function,
-- useMemo memoizes a value
+- useCallback memoizes a function.
+- useMemo memoizes a value.
 
 **Key Differences:**
 
-- useCallback memoizes the function itself, while useMemo memoizes the value returned by a function.
-- useCallback is typically used when passing functions as props to child components to prevent re-renders.
-- useMemo is typically used when you have **expensive calculations** that you want to avoid recomputing unnecessarily.
+- useCallback is typically used when passing functions as props to **child components** to prevent re-renders.
+- useMemo is typically used when you have **expensive calculations** that you want to avoid **recomputing** unnecessarily.
 
 **Troubleshoot**
 
@@ -166,4 +165,33 @@ function ProductPage({ productId, referrer }) {
       orderDetails,
     });
   }, [productId, referrer]); // ✅ Does not return a new function unnecessarily
+```
+
+```js
+import React, { useState, useCallback, memo } from "react";
+
+// Child component that will only re-render if props change
+const MyButton = memo(({ onClick, children }) => {
+  console.log("MyButton rendered");
+  return <button onClick={onClick}>{children}</button>;
+});
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  // Memoize the increment function using useCallback
+  const increment = useCallback(() => {
+    setCount((c) => c + 1);
+  }, []); // The empty dependency array means this function is only created once
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      {/* Pass the memoized function to the child component */}
+      <MyButton onClick={increment}>Increment</MyButton>
+    </div>
+  );
+}
+
+export default App;
 ```
