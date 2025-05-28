@@ -121,3 +121,21 @@ const ShippingForm = memo(function ShippingForm({ onSubmit }) {
 
 - Fixed using useCallback().
   ![](./screen3.png)
+
+# useCallback vs useMemo
+
+```js
+const cachedFn = useCallback(fn, dependencies);
+const cachedValue = useMemo(calculateValue, dependencies);
+```
+
+- Performance optimization
+- preventing unnecessary re-renders.
+- useCallback memoizes a function,
+- useMemo memoizes a value
+
+**Key Differences:**
+
+- useCallback memoizes the function itself, while useMemo memoizes the value returned by a function.
+- useCallback is typically used when passing functions as props to child components to prevent re-renders.
+- useMemo is typically used when you have **expensive calculations** that you want to avoid recomputing unnecessarily.

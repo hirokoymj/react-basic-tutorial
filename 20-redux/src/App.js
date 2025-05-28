@@ -6,6 +6,7 @@ import { Todo } from "./features/todo/Todo";
 import { NestedDataView } from "./features/nestedData/NestedDataView";
 import { FormBasic } from "./features/form/FormBasic";
 import { UsersView } from "./features/users/UsersView";
+import { UsersViewTest } from "./features/users/UsersViewTest";
 import "./App.css";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="nested-data" element={<NestedDataView />} />
           <Route path="form" element={<FormBasic />} />
           <Route path="users" element={<UsersView />} />
+          <Route path="crud-test" element={<UsersViewTest />} />
           <Route path="*" element={<NoMatch />} />
         </Route>
       </Routes>
@@ -45,6 +47,9 @@ function Layout() {
           </li>
           <li>
             <Link to="/users">RESTful API demo - Users</Link>
+          </li>
+          <li>
+            <Link to="/crud-test">CRUD TEST</Link>
           </li>
           <li>
             <Link to="/nothing-here">Nothing Here</Link>

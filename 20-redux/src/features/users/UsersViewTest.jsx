@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import useFetch from "./useFetch";
 
 const url = "https://jsonplaceholder.typicode.com/users";
 
-export const UsersView2 = () => {
+export const UsersViewTest = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
 
   ///FORM
   const [name, setName] = useState("");
@@ -16,16 +15,15 @@ export const UsersView2 = () => {
   useEffect(() => {
     fetch(url)
       .then((response) => {
-        if (!response.ok) return new Error("");
-        const data = response.json();
-        return data;
+        if (!response.ok) return new Error({ message: "faild to get users" });
+        return response.json();
       })
       .then((data) => {
         setUsers(data);
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error.message);
+        setError(error.message);
       });
   }, []);
 
@@ -34,40 +32,65 @@ export const UsersView2 = () => {
       method: "DELETE",
     })
       .then((response) => {
-        if (!response.ok) throw new Error("");
+        if (!response.ok) return new Error({ message: "message" });
         return response.json();
       })
       .then((data) => {
-        setMessage("Item deleted successfully:");
-        setUsers((values) => {
-          return values.filter((item) => item.id !== id);
-        });
         console.log(data);
-        setLoading(false);
+        setUsers((users) => users.filter((user) => user.id !== id));
       })
-      .catch((e) => {
-        setError(e);
+      .catch((error) => {
+        setError(error.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    fetch("https://jsonplaceholder.typicode.com/users", {
+    fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ name, email }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) new Error({ message: "faile to add user" });
+        return response.json();
+      })
       .then((data) => {
         setUsers([...users, data]);
-        setName("");
-        setEmail("");
       })
       .catch((error) => {
-        setError(error);
+        setError(error.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleUpdate = (id) => {
+    fetch(`https://jsonplaceholder.typicode.com/users/${id}`, {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ name: "dummy", email: "dummy@example.com" }),
+    })
+      .then((response) => {
+        if (!response.ok) new Error({ message: "failed to update" });
+        return response.json();
+      })
+      .then((data) => {
+        setUsers((users) =>
+          users.map((user) => (user.id === id ? data : user))
+        );
+      })
+      .catch((error) => setError(error.message))
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -81,7 +104,7 @@ export const UsersView2 = () => {
 
   return (
     <div className="App">
-      <h1>User list</h1>
+      <h1>CRUD TEST</h1>
       <p style={{ color: "red" }}>{message}</p>
       <table className="table">
         <thead>
@@ -101,7 +124,7 @@ export const UsersView2 = () => {
                 <button onClick={() => handleDelete(user.id)}>Delete</button>
               </td>
               <td>
-                <button onClick={() => console.log("update")}>Update</button>
+                <button onClick={() => handleUpdate(user.id)}>Update</button>
               </td>
             </tr>
           ))}
