@@ -1,6 +1,6 @@
 import React from "react";
 
-function Child({ bigCalculation }) {
+const Child = React.memo(({ bigCalculation }) => {
   console.log("Child component");
   return (
     <div style={{ border: "6px solid green", margin: "20px" }}>
@@ -8,6 +8,10 @@ function Child({ bigCalculation }) {
       <button onClick={bigCalculation}>Increment from Child</button>
     </div>
   );
-}
+});
+export default Child;
 
-export default React.memo(Child);
+// const ChildComponent = React.memo(({ onIncrement }) => {
+//   console.log("ChildComponent rendered");
+//   return <button onClick={onIncrement}>Increment Count</button>;
+// });

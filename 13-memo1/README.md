@@ -1,31 +1,89 @@
 # useCallback
 
 - Skipping unnecessary re-render.
+- useCallback returns a memorized function.
+- https://react.dev/reference/react/useCallback
 
 ```js
 const cachedFn = useCallback(fn, dependencies);
-const cachedValue = useMemo(calculateValue, dependencies);
+const Child = React.memo(({ fn }) => {});
 ```
 
-```js
-//Before
-const bigCalculation = () => {
-  for (var i = 0; i < 1000000; i++) {}
-  setCounter(counter + i);
-};
-//After
-const bigCalculation = useCallback(() => {
-  for (var i = 0; i < 1000000; i++) {}
-  setCounter(counter + i);
-}, [counter]);
-```
+## Example 1
 
 - [App.js](./src/App.js)
-- https://react.dev/reference/react/useCallback
+- [Child.js](./src/child.js)
 
-<hr />
+```js
+function App() {
+  const [counter, setCounter] = useState(0);
 
-## Problem
+  const bigCalculation = useCallback(() => {
+    for (var i = 0; i < 1000000; i++) {}
+    setCounter(counter + i);
+  }, [counter]);
+
+  return <Child bigCalculation={bigCalculation} />;
+}
+const Child = React.memo(({ bigCalculation }) => {
+  return <button onClick={bigCalculation}>Increment from Child</button>;
+});
+```
+
+## Example 2
+
+- [App.js](./src/example2/App.js)
+- [ProductPage.js](./src/example2/ProductPage.js)
+- [ShippingForm.js (Child component)](./src/example2/ShippingForm.js)
+
+```js
+function ProductPage({ productId, referrer, theme }) {
+  const handleSubmit = useCallback((orderDetails) => {
+    post('/product/' + productId + '/buy', {
+      referrer,
+      orderDetails,
+    });
+  }, [productId, referrer]);
+
+return (
+  <ShippingForm onSubmit={handleSubmit} />
+)
+const ShippingForm = React.memo(function ShippingForm({ onSubmit }) {}
+```
+
+## Example 3:
+
+- [ParentComponent.js](./src/example3/ParentComponent.js)
+
+```js
+import React, { useState, useCallback } from "react";
+
+const ChildComponent = React.memo(({ onIncrement }) => {
+  return <button onClick={onIncrement}>Increment Count</button>;
+});
+
+function ParentComponent() {
+  const [count, setCount] = useState(0);
+  const [theme, setTheme] = useState("light");
+
+  const handleIncrement = useCallback(() => {
+    setCount((prevCount) => prevCount + 1);
+  }, []); // Empty dependency array means it only gets created once
+
+  return (
+    <div>
+      <button onClick={toggleTheme}>Toggle Theme</button>
+      <ChildComponent onIncrement={handleIncrement} />
+    </div>
+  );
+}
+
+export default ParentComponent;
+```
+
+## Description
+
+**Problem:**
 
 - How to prevent the child components from being re rendered when the button in the app component is clicked?
 
@@ -33,121 +91,32 @@ const bigCalculation = useCallback(() => {
 
 - In React when the state of a parent component changes, it triggers a re- render of the parent component and its children. This is because React follows a unidirectional data flow, where changes in the state or props of a parent component can affect the rendering of its child components.
 
-```js
-function App() {
-  const [counter, setCounter] = useState(0);
-  const [color, setColor] = useState("purple");
-
-  function bigCalculation() {
-    for (var i = 0; i < 1000000; i++) {}
-    setCounter(counter + i);
-  }
-
-  return (
-    <div style={{ border: "10px solid black" }}>
-      <p style={{ color: `${color}`, fontSize: "2rem" }}>Parent component</p>
-      <button onClick={() => setColor("red")}>Change color from Parent</button>
-      <br />
-      {counter}
-      <Child bigCalculation={bigCalculation} />
-    </div>
-  );
-}
-```
-
 ## Solution
 
 - Use `usecallback` AND the `memo hook`.
 - `useCallback` hook and memo. useCallback hook means that do not recreate me(the function) unless my dependencies change.
-
 - **memo** is a HOC to prevent a component from re-rendering unless its props have changed. memo will cause React to skip rendering a component if its props have not changed
-
-- **useCallback** returns a memoized function.
-
-```js
-//---App.js
-function App() {
-  const [counter, setCounter] = useState(0);
-  const [color, setColor] = useState("purple");
-
-  const bigCalculation = useCallback(() => {
-    for (var i = 0; i < 1000000; i++) {}
-    setCounter(counter + i);
-  }, [counter]);
-
-  return (
-    <div style={{ border: "10px solid black" }}>
-      <p style={{ color: `${color}`, fontSize: "2rem" }}>Parent component</p>
-      <button onClick={() => setColor("red")}>Change color from Parent</button>
-      <br />
-      {counter}
-
-      <Child bigCalculation={bigCalculation} />
-    </div>
-  );
-}
-
-//---Child.js
-function Child({ bigCalculation }) {
-  console.log("Child component");
-  return (
-    <div style={{ border: "6px solid green", margin: "20px" }}>
-      <h2>Child Component</h2>
-      <button onClick={bigCalculation}>Increment from Child</button>
-    </div>
-  );
-}
-export default React.memo(Child);
-```
-
-- Use use callback and the memo hook.
-- when the colored state changes, we do not rerender the child components, which saves us
-  resources in the memory so we don't use more resources in the memory.
-
-- So this is very good actually.
-
-- So if I click on increment from child, of course we will see the child component because we are changing
-
-the state here, the counter state.
 
 ## Reference
 
 - https://react.dev/reference/react/useCallback
-- useCallback is a React Hook that lets you cache a function definition between re-renders.
-- `const cachedFn = useCallback(fn, dependencies)`
-- Usage: 1) Skipping re-rendering of components. 2) Updating state from a memoized callback
-
-- useCallback is a Hook, so you can only call it at the top level of your component or your own Hooks. You can’t call it inside loops or conditions. If you need that, extract a new component and move the state into it.
-
-- **By default, when a component re-renders, React re-renders all of its children recursively.** This is why, when ProductPage re-renders with a different theme, the ShippingForm component also re-renders. This is fine for components that don’t require much calculation to re-render. But if you verified a **re-render is slow**, you can tell ShippingForm to skip re-rendering when its props are the same as on last render by wrapping it in memo:
-
-```js
-import { memo } from "react";
-
-const ShippingForm = memo(function ShippingForm({ onSubmit }) {
-  // ...
-});
-```
-
 - https://react.dev/reference/react/memo
-  - memo lets you skip re-rendering a component when its props are unchanged.
 
-<hr />
-- Default. Initialized the components
-  
+## Screenshots
+
 ![](./screen1.png)
 
 <hr />
-- When the text color changed to red, Child component calls.
-  
+
 ![](./screen2.png)
 
 <hr />
 
-- Fixed using useCallback().
-  ![](./screen3.png)
+![](./screen3.png)
 
-# useCallback vs useMemo
+<hr />
+
+## useCallback vs useMemo
 
 ```js
 const cachedFn = useCallback(fn, dependencies);
@@ -156,67 +125,5 @@ const cachedValue = useMemo(calculateValue, dependencies);
 
 - Performance optimization.
 - preventing unnecessary re-renders.
-- useCallback memoizes a function.
-- useMemo memoizes a value.
-
-**Key Differences:**
-
-- useCallback is typically used when passing functions as props to **child components** to prevent re-renders.
-- useMemo is typically used when you have **expensive calculations** that you want to avoid **recomputing** unnecessarily.
-
-**Troubleshoot**
-
-- https://react.dev/reference/react/useCallback#troubleshooting
-
-BEFORE
-
-```js
-function ProductPage({ productId, referrer }) {
-  const handleSubmit = useCallback((orderDetails) => {
-    post('/product/' + productId + '/buy', {
-      referrer,
-      orderDetails,
-    });
-  }); // 🔴 Returns a new function every time: no dependency array
-```
-
-AFTER
-
-```js
-function ProductPage({ productId, referrer }) {
-  const handleSubmit = useCallback((orderDetails) => {
-    post('/product/' + productId + '/buy', {
-      referrer,
-      orderDetails,
-    });
-  }, [productId, referrer]); // ✅ Does not return a new function unnecessarily
-```
-
-```js
-import React, { useState, useCallback, memo } from "react";
-
-// Child component that will only re-render if props change
-const MyButton = memo(({ onClick, children }) => {
-  console.log("MyButton rendered");
-  return <button onClick={onClick}>{children}</button>;
-});
-
-function App() {
-  const [count, setCount] = useState(0);
-
-  // Memoize the increment function using useCallback
-  const increment = useCallback(() => {
-    setCount((c) => c + 1);
-  }, []); // The empty dependency array means this function is only created once
-
-  return (
-    <div>
-      <p>Count: {count}</p>
-      {/* Pass the memoized function to the child component */}
-      <MyButton onClick={increment}>Increment</MyButton>
-    </div>
-  );
-}
-
-export default App;
-```
+- `useCallback` memoizes a function.
+- `useMemo` memoizes a value.
