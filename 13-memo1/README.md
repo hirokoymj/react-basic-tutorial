@@ -1,4 +1,29 @@
-# Memo 1
+# useCallback
+
+- Skipping unnecessary re-render.
+
+```js
+const cachedFn = useCallback(fn, dependencies);
+const cachedValue = useMemo(calculateValue, dependencies);
+```
+
+```js
+//Before
+const bigCalculation = () => {
+  for (var i = 0; i < 1000000; i++) {}
+  setCounter(counter + i);
+};
+//After
+const bigCalculation = useCallback(() => {
+  for (var i = 0; i < 1000000; i++) {}
+  setCounter(counter + i);
+}, [counter]);
+```
+
+- [App.js](./src/App.js)
+- https://react.dev/reference/react/useCallback
+
+<hr />
 
 ## Problem
 

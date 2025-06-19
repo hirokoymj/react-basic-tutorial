@@ -5,10 +5,10 @@ function App() {
   const [counter, setCounter] = useState(0);
   const [color, setColor] = useState("purple");
 
-  // function bigCalculation() {
+  // const bigCalculation = () => {
   //   for (var i = 0; i < 1000000; i++) {}
   //   setCounter(counter + i);
-  // }
+  // };
 
   const bigCalculation = useCallback(() => {
     for (var i = 0; i < 1000000; i++) {}
