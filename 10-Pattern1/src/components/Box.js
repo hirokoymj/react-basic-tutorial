@@ -1,4 +1,4 @@
-export default function Box({ children }) {
+const Box = ({ children }) => {
   return (
     <div
       style={{
@@ -9,7 +9,8 @@ export default function Box({ children }) {
       {children}
     </div>
   );
-}
+};
+export default Box;
 
 Box.GreenOutline = function BoxGreenOutline({ children }) {
   return (
