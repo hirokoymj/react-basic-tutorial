@@ -102,17 +102,13 @@ export default ParentComponent;
 - https://react.dev/reference/react/useCallback
 - https://react.dev/reference/react/memo
 
-## Screenshots
+## Demo
+
+```js
+npm run start
+```
 
 ![](./screen1.png)
-
-<hr />
-
-![](./screen2.png)
-
-<hr />
-
-![](./screen3.png)
 
 <hr />
 
