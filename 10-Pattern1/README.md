@@ -23,9 +23,11 @@ function App() {
 ## Example 2
 
 - Reuse the same component having the same design.
+- [Box.js](./src/components/Box.js)
+- [BoxDemo.js](./src/pages/BoxDemo.js)
 
 ```js
-export default function Box(props) {
+const Box = ({ children }) => {
   return (
     <div
       style={{
@@ -33,10 +35,12 @@ export default function Box(props) {
         width: "25vw",
         margin: "20px",
       }}>
-      {props.children}
+      {children}
     </div>
   );
-}
+};
+export default Box;
+
 Box.GreenOutline = function BoxGreenOutline({ children }) {
   return (
     <div style={{ border: "2px solid green", margin: "30px" }}>{children}</div>
@@ -50,31 +54,7 @@ Box.BrownOutline = function BoxBrownOutline({ children }) {
 };
 ```
 
-```js
-export default function One() {
-  return (
-    <Box>
-      <Box.GreenOutline>Some content</Box.GreenOutline>
-    </Box>
-  );
-}
-
-function Two() {
-  return (
-    <Box>
-      <Box.BrownOutline>
-        <input placeholder="Enter Email" />
-      </Box.BrownOutline>
-    </Box>
-  );
-}
-
-export default function Three() {
-  return <Box>From Three</Box>;
-}
-```
-
-## Demo
+## Demo of the example 2
 
 ```js
 npm run start
