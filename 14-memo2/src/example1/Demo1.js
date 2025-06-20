@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 
-function App() {
+const Demo1 = () => {
   const [counter, setCounter] = useState(0);
   const [color, setColor] = useState("purple");
 
@@ -41,5 +41,5 @@ function App() {
       <button onClick={increase}>Increment</button>
     </div>
   );
-}
-export default App;
+};
+export default Demo1;
